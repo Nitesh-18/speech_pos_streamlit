@@ -3,7 +3,8 @@ import os
 from streamlit_webrtc import webrtc_streamer, AudioProcessorBase, ClientSettings
 
 # Replace with your actual ffmpeg.exe path
-ffmpeg_path = r"C:\ffmpeg\bin\ffmpeg.exe"
+# ffmpeg_path = r"C:\ffmpeg\bin\ffmpeg.exe"
+ffmpeg_path = "ffmpeg"  # Assume ffmpeg is in PATH
 os.environ["PATH"] += os.pathsep + os.path.dirname(ffmpeg_path)
 import whisper
 import spacy
