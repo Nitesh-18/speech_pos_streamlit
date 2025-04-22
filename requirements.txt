@@ -46,7 +46,7 @@ narwhals==1.35.0
 networkx==3.4.2
 numba==0.61.2
 numpy==2.2.4
-openai-whisper @ git+https://github.com/openai/whisper@517a43ecd132a2089d85f4ebc044728a71d49f6e
+openai-whisper==1.0.0
 packaging==24.2
 pandas==2.2.3
 pillow==11.2.1
