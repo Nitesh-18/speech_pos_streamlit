@@ -1,20 +1,19 @@
 import streamlit as st
 import os
-from streamlit_webrtc import webrtc_streamer, AudioProcessorBase, ClientSettings
-
-# Replace with your actual ffmpeg.exe path
-# ffmpeg_path = r"C:\ffmpeg\bin\ffmpeg.exe"
-ffmpeg_path = "ffmpeg"  # Assume ffmpeg is in PATH
-os.environ["PATH"] += os.pathsep + os.path.dirname(ffmpeg_path)
-import whisper
-import spacy
+import tempfile
 import numpy as np
 import av
-import tempfile
 import pandas as pd
+import whisper
+import spacy
+import imageio_ffmpeg
+from streamlit_webrtc import webrtc_streamer, AudioProcessorBase, ClientSettings
 from pydub.utils import which
 from pydub import AudioSegment
 
+# Set FFmpeg path using imageio-ffmpeg (cross-platform)
+ffmpeg_path = imageio_ffmpeg.get_ffmpeg_exe()
+os.environ["PATH"] += os.pathsep + os.path.dirname(ffmpeg_path)
 AudioSegment.converter = which("ffmpeg")
 
 # Load models once
@@ -27,7 +26,6 @@ st.markdown("Record from mic or upload audio to transcribe and tag parts of spee
 # --- Audio Upload Section ---
 uploaded_audio = st.file_uploader("Upload Audio File", type=["wav", "mp3", "m4a"])
 
-
 def transcribe_and_tag(audio_path):
     # Transcribe with Whisper
     result = whisper_model.transcribe(audio_path)
@@ -38,7 +36,6 @@ def transcribe_and_tag(audio_path):
     pos_data = [(token.text, token.pos_, token.tag_) for token in doc]
 
     return transcription, pos_data
-
 
 # If file is uploaded
 if uploaded_audio is not None:
@@ -65,9 +62,7 @@ if uploaded_audio is not None:
     os.remove(wav_path)
 
 # --- Real-time Mic Input Section ---
-
 st.markdown("### 🎙️ Or Record Live Audio from Microphone")
-
 
 class AudioProcessor(AudioProcessorBase):
     def __init__(self):
@@ -88,7 +83,6 @@ class AudioProcessor(AudioProcessorBase):
                 audio_segment.export(tmp_wav.name, format="wav")
                 return tmp_wav.name
         return None
-
 
 ctx = webrtc_streamer(
     key="mic",
